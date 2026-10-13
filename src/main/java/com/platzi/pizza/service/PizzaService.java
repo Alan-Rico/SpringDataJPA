@@ -4,6 +4,7 @@ import com.platzi.pizza.persistence.entity.PizzaEntity;
 import com.platzi.pizza.persistence.repository.PizzaPagSortRepository;
 import com.platzi.pizza.persistence.repository.PizzaRepository;
 import com.platzi.pizza.service.dto.UpdatePizzaPriceDTO;
+import com.platzi.pizza.service.exception.EmailApiException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -66,9 +67,14 @@ public class PizzaService {
         this.pizzaRepository.deleteById(idPizza);
     }
 
-    @Transactional
+    @Transactional(noRollbackFor = EmailApiException.class)
     public void updatePrice(UpdatePizzaPriceDTO dto) {
         this.pizzaRepository.updatePrice(dto);
+        this.sendEmail();
+    }
+
+    public void sendEmail(){
+        throw new  EmailApiException();
     }
 
     public boolean exists(int idPizza) {
